@@ -23,13 +23,14 @@ module.exports = async (req, res) => {
       res.status(500).json({ message: 'Erro ao salvar o registro' });
     }
   } else if (req.method === 'PUT') {
-    const recordId = req.query.id;
+    const recordId = req.url.split('/').pop(); // Captura o último segmento da URL como ID
     const updatedRecord = req.body;
+  
     try {
       const data = await fs.readFile(recordsPath, 'utf8');
       const records = JSON.parse(data);
-      const index = records.findIndex(record => record.id === recordId);
-
+      const index = records.findIndex(record => record.id == recordId);
+  
       if (index !== -1) {
         records[index] = { ...records[index], ...updatedRecord };
         await fs.writeFile(recordsPath, JSON.stringify(records, null, 2));

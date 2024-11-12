@@ -1,4 +1,4 @@
-const URL_RECORD = 'http://localhost:3000/api/records'; // A URL da API (já definida para a Vercel)
+const URL_RECORD = '/api/records'; // A URL da API (já definida para a Vercel)
 
 $(document).ready(function() {
     let records = [];

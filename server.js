@@ -4,12 +4,12 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000; // Utiliza a porta fornecida pela Vercel
 
 // Configurações iniciais
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static('public')); // Servir arquivos estáticos
+app.use(express.static('public')); // Serve arquivos estáticos da pasta 'public'
 
 // Caminho para o arquivo JSON que armazena os registros
 const DATA_FILE = './data.json';

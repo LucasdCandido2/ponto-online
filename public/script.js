@@ -1,4 +1,4 @@
-const URL_RECORD = 'https://ponto-online.vercel.app/api/records';
+const URL_RECORD = '/api/records'; // A URL da API (já definida para a Vercel)
 
 $(document).ready(function() {
     let records = [];
@@ -77,79 +77,23 @@ $(document).ready(function() {
 
     // Renderizar a tabela com os registros
     function renderTable(filteredRecords) {
-        const $table = $('#recordsTable');
+        const $table = $('#recordsTable tbody');
         $table.empty();
-
-        if (filteredRecords && filteredRecords.length > 0) {
-            filteredRecords.forEach((record) => {
-                if (record && record.nome) {
-                    const row = `
-                    <tr>
-                        <td>${record.nome}</td>
-                        <td>${record.data}</td>
-                        <td>${record.entrada || ''}</td>
-                        <td>${record.saidaAlmoco || ''}</td>
-                        <td>${record.entradaAlmoco || ''}</td>
-                        <td>${record.saida || ''}</td>
-                        <td>${record.observacao || ''}</td>
-                    </tr>
-                    `;
-                    $table.append(row);
-                }
-            });
-        } else {
-            $table.append('<tr><td colspan="7" class="text-center">Nenhum registro encontrado.</td></tr>');
-        }
+        filteredRecords.forEach(record => {
+            $table.append(`
+                <tr>
+                    <td>${record.nome}</td>
+                    <td>${record.data}</td>
+                    <td>${record.entrada || ''}</td>
+                    <td>${record.saidaAlmoco || ''}</td>
+                    <td>${record.entradaAlmoco || ''}</td>
+                    <td>${record.saida || ''}</td>
+                    <td>${record.observacao || ''}</td>
+                </tr>
+            `);
+        });
     }
 
-    // Função para exportar para o Excel
-    $('#exportExcel').click(function() {
-        const filtroData = $('#dataFiltro').val();
-        const registrosFiltrados = filtroData ? records.filter(record => record.data === filtroData) : records;
-
-        const formattedRecords = registrosFiltrados.map(record => ({
-            "Colaborador": record.nome,
-            "Data": record.data,
-            "Entrada": record.entrada,
-            "Saída (Almoço)": record.saidaAlmoco,
-            "Entrada (Almoço)": record.entradaAlmoco,
-            "Saída": record.saida,
-            "Observação": record.observacao
-        }));
-
-        const ws = XLSX.utils.json_to_sheet(formattedRecords);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Registros de Ponto");
-
-        const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-        const blob = new Blob([wbout], { type: 'application/octet-stream' });
-        const link = document.createElement('a');
-        const objectURL = URL.createObjectURL(blob);
-        link.href = objectURL;
-        link.download = "registro_ponto.xlsx";
-        link.click();
-    });
-
-    $('#filterButton').click(function() {
-        const dataInicio = $('#dataInicioFiltro').val();
-        const dataFim = $('#dataFimFiltro').val();
-    
-        // Verificar se as datas foram selecionadas
-        if (dataInicio && dataFim) {
-            const registrosFiltrados = records.filter(record => {
-                const recordDate = new Date(record.data.split('/').reverse().join('-')); // Converte 'dd/mm/aaaa' para 'aaaa-mm-dd'
-                const startDate = new Date(dataInicio);
-                const endDate = new Date(dataFim);
-    
-                // Verificar se a data do registro está dentro do intervalo
-                return recordDate >= startDate && recordDate <= endDate;
-            });
-            renderTable(registrosFiltrados);
-        } else {
-            alert("Por favor, selecione a data de início e a data de fim.");
-        }
-    });
-
-    // Carregar registros ao iniciar
+    // Carregar os registros ao carregar a página
     loadRecords();
 });

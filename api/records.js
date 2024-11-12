@@ -1,54 +1,34 @@
-const fs = require('fs').promises;
-const path = require('path');
+import express from 'express';
+import cors from 'cors';
+import { db } from './firebase-config.js';
+import { collection, addDoc, getDocs, updateDoc, doc } from 'firebase/firestore';
 
-module.exports = async (req, res) => {
-  const recordsPath = path.join(__dirname, '..', 'data', 'records.json'); // Caminho para o arquivo JSON
+const app = express();
+const PORT = process.env.PORT || 3000;
+app.use(cors());
+app.use(express.json());
 
-  if (req.method === 'GET') {
-    try {
-      const data = await fs.readFile(recordsPath, 'utf8');
-      res.status(200).json(JSON.parse(data));
-    } catch (err) {
-      res.status(500).json({ message: 'Erro ao ler os registros' });
-    }
-  } else if (req.method === 'POST') {
-    const newRecord = req.body;
-    try {
-      const data = await fs.readFile(recordsPath, 'utf8');
-      const records = JSON.parse(data);
-      records.push(newRecord);
-      await fs.writeFile(recordsPath, JSON.stringify(records, null, 2));
-      res.status(201).json({ message: 'Registro adicionado com sucesso' });
-    } catch (err) {
-      res.status(500).json({ message: 'Erro ao salvar o registro' });
-    }
-  } else if (req.method === 'PUT') {
-    const recordId = req.url.split('/').pop(); // Captura o último segmento da URL como ID
-    const updatedRecord = req.body;
-  
-    console.log('Atualizando o registro com ID:', recordId);
-    console.log('Dados recebidos para atualização:', updatedRecord);
-  
-    try {
-      const data = await fs.readFile(recordsPath, 'utf8');
-      const records = JSON.parse(data);
-      const index = records.findIndex(record => record.id == recordId);
-  
-      if (index !== -1) {
-        console.log('Registro encontrado, atualizando...');
-        records[index] = { ...records[index], ...updatedRecord };
-        await fs.writeFile(recordsPath, JSON.stringify(records, null, 2));
-        res.status(200).json({ message: 'Registro atualizado com sucesso' });
-      } else {
-        console.log('Registro não encontrado');
-        res.status(404).json({ message: 'Registro não encontrado' });
-      }
-    } catch (err) {
-      console.error('Erro ao atualizar o registro:', err);
-      res.status(500).json({ message: 'Erro ao atualizar o registro', error: err.message });
-    }
-  
-  } else {
-    res.status(405).json({ message: 'Método não permitido' });
+app.get('/api/records', async (req, res) => {
+  const recordsRef = collection(db, 'registros');
+  try {
+    const snapshot = await getDocs(recordsRef);
+    const records = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.status(200).json(records);
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao carregar registros', error });
   }
-};
+});
+
+app.post('/api/records', async (req, res) => {
+  const recordsRef = collection(db, 'registros');
+  try {
+    const docRef = await addDoc(recordsRef, req.body);
+    res.status(201).json({ message: 'Registro adicionado com sucesso', id: docRef.id });
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao adicionar registro', error });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+});

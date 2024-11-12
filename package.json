@@ -1,17 +1,14 @@
 {
-  "name": "ponto-online",
+  "name": "projeto-ponto-online",
   "version": "1.0.0",
-  "description": "Sistema de registro de ponto online",
-  "main": "index.html",
   "scripts": {
-    "dev": "vercel dev",
-    "deploy": "vercel --prod"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon api/records.js",
+    "start": "node api/records.js"
   },
   "dependencies": {
-    "express": "^4.21.1",
-    "cors": "^2.8.5",
     "body-parser": "^1.20.3",
-    "xlsx": "^0.17.4"
+    "cors": "^2.8.5"
   },
   "devDependencies": {
     "nodemon": "^3.1.7"

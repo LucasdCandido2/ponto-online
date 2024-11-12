@@ -1,4 +1,4 @@
-const URL_RECORD = 'https://ponto-online.vercel.app/';
+const URL_RECORD = 'https://ponto-online.vercel.app/api/records';
 
 $(document).ready(function() {
     let records = [];

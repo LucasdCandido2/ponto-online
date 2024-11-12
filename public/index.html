@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ponto Online</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="#" type="image/x-icon">
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center mt-4">Registro de Ponto Online</h2>
+        <div class="form-inline">
+            <label for="dataInicioFiltro">Data Início:</label>
+            <input type="date" id="dataInicioFiltro" class="form-control mx-2" />
+            <label for="dataFimFiltro">Data Fim:</label>
+            <input type="date" id="dataFimFiltro" class="form-control mx-2" />
+            <button id="filterButton" class="btn btn-primary">Filtrar</button>
+        </div>
+        <table class="table table-bordered mt-4">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Data</th>
+                    <th>Entrada</th>
+                    <th>Saída Almoço</th>
+                    <th>Volta Almoço</th>
+                    <th>Saída</th>
+                    <th>Observações</th>
+                </tr>
+            </thead>
+            <tbody id="recordsTable">
+                <!-- Registros adicionados dinamicamente -->
+            </tbody>
+        </table>
+        <button id="registerButton" class="btn btn-primary mt-3">Registrar Ponto</button>
+        <button id="exportExcel" class="btn btn-success mt-3">Exportar para Excel</button>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
